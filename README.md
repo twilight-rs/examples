@@ -4,6 +4,12 @@
 
 # examples
 
+## Webhook-slash
+Example of how to use the slash commands with a webhook instead of receiving 
+the commands over the gateway. It currently uses code that is not yet 
+upstreamed and is subject to change before the proper release by Discord.
+
+
 [discord badge]: https://img.shields.io/discord/745809834183753828?color=%237289DA&label=discord%20server&logo=discord&style=for-the-badge
 [discord link]: https://discord.gg/7jj8n7D
 [github badge]: https://img.shields.io/badge/github-twilight-6f42c1.svg?style=for-the-badge&logo=github
