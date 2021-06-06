@@ -2,9 +2,9 @@ use ed25519_dalek::{PublicKey, Signature, Verifier, PUBLIC_KEY_LENGTH};
 use hex::FromHex;
 use once_cell::sync::Lazy;
 use std::future::Future;
-use twilight_model::applications::{
+use twilight_model::application::{
+    callback::{CallbackData, InteractionResponse},
     interaction::Interaction,
-    response::{CommandCallbackData, InteractionResponse},
 };
 
 use hyper::{
@@ -27,7 +27,7 @@ async fn interaction_handler<F>(
 where
     F: Future<Output = Result<InteractionResponse, GenericError>>,
 {
-    if req.method() != &Method::POST {
+    if req.method() != Method::POST {
         return Ok(Response::builder()
             .status(StatusCode::METHOD_NOT_ALLOWED)
             .body(Body::empty())?);
@@ -56,10 +56,13 @@ where
 
     let whole_body = hyper::body::to_bytes(req).await?;
 
-    if let Err(_) = PUB_KEY.verify(
-        vec![timestamp.as_bytes(), &whole_body].concat().as_ref(),
-        &signature,
-    ) {
+    if PUB_KEY
+        .verify(
+            vec![timestamp.as_bytes(), &whole_body].concat().as_ref(),
+            &signature,
+        )
+        .is_err()
+    {
         return Ok(Response::builder()
             .status(StatusCode::FORBIDDEN)
             .body(Body::empty())?);
@@ -81,14 +84,11 @@ where
         Interaction::ApplicationCommand(_) => {
             let response = f(interaction).await?;
 
-            let res_status = match response {
-                InteractionResponse::Acknowledge => StatusCode::ACCEPTED,
-                _ => StatusCode::OK,
-            };
-
             let json = serde_json::to_vec(&response)?;
 
-            Ok(Response::builder().status(res_status).body(json.into())?)
+            Ok(Response::builder()
+                .status(StatusCode::OK)
+                .body(json.into())?)
         }
         _ => Ok(Response::builder()
             .status(StatusCode::BAD_REQUEST)
@@ -98,7 +98,7 @@ where
 
 async fn handler(i: Interaction) -> Result<InteractionResponse, GenericError> {
     match i {
-        Interaction::ApplicationCommand(ref cmd) => match cmd.command_data.name.as_ref() {
+        Interaction::ApplicationCommand(ref cmd) => match cmd.data.name.as_ref() {
             "vroom" => vroom(i).await,
             "debug" => debug(i).await,
             _ => debug(i).await,
@@ -109,9 +109,11 @@ async fn handler(i: Interaction) -> Result<InteractionResponse, GenericError> {
 
 async fn debug(i: Interaction) -> Result<InteractionResponse, GenericError> {
     Ok(InteractionResponse::ChannelMessageWithSource(
-        CommandCallbackData {
+        CallbackData {
+            allowed_mentions: None,
+            flags: None,
             tts: None,
-            content: format!("```rust\n{:?}\n```", i),
+            content: Some(format!("```rust\n{:?}\n```", i)),
             embeds: Default::default(),
         },
     ))
@@ -119,9 +121,11 @@ async fn debug(i: Interaction) -> Result<InteractionResponse, GenericError> {
 
 async fn vroom(_: Interaction) -> Result<InteractionResponse, GenericError> {
     Ok(InteractionResponse::ChannelMessageWithSource(
-        CommandCallbackData {
+        CallbackData {
+            allowed_mentions: None,
+            flags: None,
             tts: None,
-            content: "Vroom vroom".to_owned(),
+            content: Some("Vroom vroom".to_owned()),
             embeds: Default::default(),
         },
     ))
