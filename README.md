@@ -6,9 +6,7 @@
 
 ## Webhook-slash
 Example of how to use the slash commands with a webhook instead of receiving 
-the commands over the gateway. It currently uses code that is not yet 
-upstreamed and is subject to change before the proper release by Discord.
-
+the commands over the gateway. This version uses Hyper directly.
 
 [discord badge]: https://img.shields.io/discord/745809834183753828?color=%237289DA&label=discord%20server&logo=discord&style=for-the-badge
 [discord link]: https://discord.gg/7jj8n7D
