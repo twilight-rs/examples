@@ -2,11 +2,15 @@
 
 ![project logo][logo]
 
-# examples
+# Twilight Examples
+
+This repository contains robust examples of different types of projects.
 
 ## Webhook-slash
-Example of how to use the slash commands with a webhook instead of receiving 
-the commands over the gateway. This version uses Hyper directly.
+Shows how to receive `InteractionCreate` events from a webhook, without needing
+to run a gateway connection. Uses [`hyper`] directly.
+
+
 
 [discord badge]: https://img.shields.io/discord/745809834183753828?color=%237289DA&label=discord%20server&logo=discord&style=for-the-badge
 [discord link]: https://discord.gg/7jj8n7D
@@ -14,5 +18,6 @@ the commands over the gateway. This version uses Hyper directly.
 [github link]: https://github.com/twilight-rs/twilight
 [license badge]: https://img.shields.io/badge/license-ISC-blue.svg?style=for-the-badge&logo=pastebin
 [license link]: https://github.com/twilight-rs/twilight/blob/trunk/LICENSE.md
-[logo]: https://raw.githubusercontent.com/twilight-rs/twilight/trunk/logo.png
+[logo]: https://raw.githubusercontent.com/twilight-rs/twilight/main/logo.png
 [rust badge]: https://img.shields.io/badge/rust-1.48+-93450a.svg?style=for-the-badge&logo=rust
+[`hyper`]: https://docs.rs/hyper
