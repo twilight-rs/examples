@@ -8,6 +8,7 @@ use twilight_model::application::{
 };
 
 use hyper::{
+    header::CONTENT_TYPE,
     http::StatusCode,
     service::{make_service_fn, service_fn},
     Body, Method, Request, Response, Server,
@@ -75,14 +76,13 @@ where
         .is_err()
     {
         return Ok(Response::builder()
-            .status(StatusCode::FORBIDDEN)
+            .status(StatusCode::UNAUTHORIZED)
             .body(Body::empty())?);
     }
 
     // Deserialize the body into a interaction.
     let interaction = serde_json::from_slice::<Interaction>(&whole_body)?;
 
-    
     match interaction {
         // Return a Pong if a Ping is received.
         Interaction::Ping(_) => {
@@ -92,6 +92,7 @@ where
 
             Ok(Response::builder()
                 .status(StatusCode::OK)
+                .header(CONTENT_TYPE, "application/json")
                 .body(json.into())?)
         }
         // Respond to a slash command.
@@ -100,10 +101,11 @@ where
             let response = f(interaction).await?;
 
             // Serialize the response and return it back to discord.
-            
+
             let json = serde_json::to_vec(&response)?;
 
             Ok(Response::builder()
+                .header(CONTENT_TYPE, "application/json")
                 .status(StatusCode::OK)
                 .body(json.into())?)
         }
