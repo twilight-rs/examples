@@ -42,7 +42,7 @@ where
     // Check if the path the request is sent to is the root of the domain.
     //
     // This filter is for the purposes of this example. The user may filter by
-    // any subdomain they choose.
+    // any path they choose.
     if req.uri().path() != "/" {
         return Ok(Response::builder()
             .status(StatusCode::NOT_FOUND)
