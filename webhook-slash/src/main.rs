@@ -38,8 +38,11 @@ where
             .status(StatusCode::METHOD_NOT_ALLOWED)
             .body(Body::empty())?);
     }
-    // Check if the path the request is sent to is the root of the domain,
-    // this is the only path supported by Discord.
+
+    // Check if the path the request is sent to is the root of the domain.
+    //
+    // This filter is for the purposes of this example. The user may filter by
+    // any subdomain they choose.
     if req.uri().path() != "/" {
         return Ok(Response::builder()
             .status(StatusCode::NOT_FOUND)
